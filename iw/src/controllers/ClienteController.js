@@ -1,0 +1,115 @@
+import { buscarTodos as _buscarTodos, 
+         buscarUm as _buscarUm, 
+         inserir as _inserir, 
+         alterar as _alterar, 
+         excluir as _excluir } from '../services/ClienteService.js';
+//Importa funções do arquivo ClienteService.js
+export async function buscarTodos(req, res) {
+    const json = { error: '', result: [] };
+
+    const clientes = await _buscarTodos();
+
+    for (let i in clientes) {
+        json.result.push({
+            codigo: clientes[i].Id_Cliente,
+            nome: clientes[i].Nome_Cliente,
+            cidade: clientes[i].Cidade,
+            estado: clientes[i].Estado,
+            pais: clientes[i].Pais
+        });
+    }
+    res.json(json);
+// A função cria um objeto jason com as propriedades error e result 
+}
+export async function buscarUm(req, res) {
+    let json = { error: '', result: {} };
+
+    let id_cliente = req.params.Id_Cliente;
+    let cliente = await _buscarUm(id_cliente);
+
+    if (cliente) {
+        json.result = cliente;
+    }
+    res.json(json);
+}
+// A função busca o cliente pelo seu codigo
+export async function inserir(req, res) {
+    let json = { error: '', result: {} };
+
+    let codigo = req.body.Id_Cliente;
+    let nome = req.body.Nome_Cliente;
+    let segmento = req.body.Segmento;
+    let cidade = req.body.Cidade;
+    let estado = req.body.Estado;
+    let pais = req.body.Pais;
+    let mercado = req.body.Mercado;
+    let regiao = req.body.Regiao;
+
+    if (codigo && nome && segmento && cidade && estado && pais
+        && mercado && regiao) {
+        let cliente = await _inserir(codigo, nome, segmento, cidade,
+            estado, pais, mercado, regiao);
+        json.result = {
+            cliente: codigo,
+            nome,
+            segmento,
+            cidade,
+            estado,
+            pais,
+            mercado,
+            regiao
+        };
+    }
+    else {
+        json.error = 'Erro no envio dos dados';
+    }
+
+    res.json(json);
+}
+// A função recebe os dodos de um novo cliente na requisição
+export async function alterar(req, res) {
+    let json = { error: '', result: {} };
+
+    let codigo = req.params.Id_Cliente;
+    let nome = req.body.Nome_Cliente;
+    let segmento = req.body.Segmento;
+    let cidade = req.body.Cidade;
+    let estado = req.body.Estado;
+    let pais = req.body.Pais;
+    let mercado = req.body.Mercado;
+    let regiao = req.body.Regiao;
+
+    if (codigo && nome && segmento && cidade && estado && pais
+        && mercado && regiao) {
+        await _alterar(codigo, nome, segmento, cidade,
+            estado, pais, mercado, regiao);
+        json.result = {
+            codigo,
+            nome,
+            segmento,
+            cidade,
+            estado,
+            pais,
+            mercado,
+            regiao
+        };
+    }
+    else {
+        json.error = 'Erro no envio dos dados';
+    }
+
+    res.json(json);
+}
+// A função recebe a dados de um cliente ja cadastrado
+export async function excluir(req, res) {
+    let json = { error: '', result: {} };
+
+    let id_cliente = req.params.Id_Cliente;
+    let cliente = await _excluir(id_cliente);
+
+    if (cliente) {
+        json.result = cliente;
+    }
+    res.json(json);
+}
+// A função exclui os dados de um cliente no Banco
